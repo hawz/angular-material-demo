@@ -3,39 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Angular Material Demo</title>
+  <title>Angular Material - Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="node_modules/angular-material/angular-material.min.css">
   <link rel="stylesheet" href="assets/app.css">
 </head>
-<body ng-app="MyApp" layout="column">
+<body ng-app="MyApp" layout="column" ng-controller="UsersController as ul">
 
-  <md-toolbar>
-    <h1>Angular Material Starter</h1>
+  <md-toolbar layout="row">
+    <md-button class="menu" hide-gt-sm ng-click="ul.toggleList()" aria-label="Show User List">
+      <md-icon md-svg-icon="menu"></md-icon>
+    </md-button>
+    <h3>Angular Material - Demo</h3>
   </md-toolbar>
-  <div class="container" layout="row" flex>
-    <md-sidenav md-is-locked-open="true" class="md-whiteframe-4dp">
-      <md-list>
-        <md-list-item>
-          <md-button>
-            <md-icon md-svg-src="assets/svg/avatar-1.svg" class="avatar"></md-icon>
-            Alberto Masia
-          </md-button>
-        </md-list-item>
-        <md-list-item>
-          <md-button>
-            <md-icon md-svg-src="assets/svg/avatar-4.svg" class="avatar"></md-icon>
-            Gianni Bugno
+
+  <div layout="row" flex>
+    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2">
+      <md-list ng-click="ul.toggleList()">
+        <md-list-item ng-repeat="user in ul.users">
+          <md-button ng-click="ul.selectUser(user)">
+            <md-icon md-svg-src="{{ user.avatar }}" class="avatar"></md-icon>
+            {{ user.name }}
           </md-button>
         </md-list-item>
       </md-list>
     </md-sidenav>
-    <md-content id="content" flex>
-      <md-icon md-svg-src="assets/svg/avatar-1.svg" class="avatar"></md-icon>
-      <h2>Alberto Masia</h2>
-      <p>
-          Bacon ipsum dolor amet ball tip tongue ham hock bresaola. Short loin pork chop brisket, andouille salami tenderloin pig ground round frankfurter turducken t-bone prosciutto. Beef chicken prosciutto sausage turducken landjaeger ham hock leberkas hamburger pork belly tongue chuck picanha. Ribeye ham hock swine, frankfurter shoulder tri-tip brisket filet mignon hamburger boudin t-bone tail.
-      </p>
+    <md-content flex id="content">
+      <md-icon md-svg-icon="{{ ul.selected.avatar }}" class="avatar"></md-icon>
+      <h2>{{ ul.selected.name }}</h2>
+      <p>{{ ul.selected.content }}</p>
+
+      <md-button class="share" md-no-ink aria-label="Share with {{ ul.selected.name }}" ng-click="ul.share(ul.selected)">
+        <md-icon md-svg-icon="share"></md-icon>
+      </md-button>
     </md-content>
   </div>
   
@@ -43,13 +43,24 @@
   <script src="node_modules/angular-animate/angular-animate.js"></script>
   <script src="node_modules/angular-aria/angular-aria.min.js"></script>
   <script src="node_modules/angular-material/angular-material.min.js"></script>
-  <script src="Users.js"></script>
-  <script src="UserService.js"></script>
-  <script src="UserController.js"></script>
+  <script src="/app/src/components/users/users.module.js"></script>
+  <script src="/app/src/components/users/users.service.js"></script>
+  <script src="/app/src/components/users/users.controller.js"></script>
   <script>
-    angular.module('MyApp', ['ngMaterial'])
-      .run(function() {
-        console.log('MyApp is ready!');
+    angular.module('MyApp', ['ngMaterial', 'users'])
+      .config(function($mdIconProvider, $mdThemingProvider) {
+        $mdIconProvider
+          .defaultIconSet('./assets/svg/avatars.svg'          , 128)
+          .icon('menu', './assets/svg/menu.svg'               , 24)
+          .icon("share"      , "./assets/svg/share.svg"       , 24)
+          .icon("google_plus", "./assets/svg/google_plus.svg" , 512)
+          .icon("hangouts"   , "./assets/svg/hangouts.svg"    , 512)
+          .icon("twitter"    , "./assets/svg/twitter.svg"     , 512)
+          .icon("phone"      , "./assets/svg/phone.svg"       , 512);
+
+        $mdThemingProvider.theme('default')
+          .primaryPalette('brown')
+          .accentPalette('red');
       });
   </script>
 </body>
